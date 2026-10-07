@@ -1,0 +1,7 @@
+# SHERPA_TERM_MAP -- domain-term corrections, one "wrong=>right" per line.
+# Applied to drafts and corrected finals alike.  Neither ASR backend reliably
+# emits this lecture's key term: the speaker's 暂/站 are near-homophones.
+站稳态=>暂稳态
+散稳态=>暂稳态
+赞稳态=>暂稳态
+战稳态=>暂稳态

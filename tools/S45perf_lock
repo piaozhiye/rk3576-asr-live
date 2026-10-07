@@ -1,0 +1,41 @@
+#!/bin/sh
+# Apply the frequency lock at boot.  Sourced by the S??* loop in rcS.
+#
+# Numbered 45 so it runs after udev (S10) has populated sysfs but before
+# weston (S49) starts, so the compositor comes up on a fixed clock too -- a
+# governor that shifts frequency mid-frame is what causes visible stutter.
+#
+# Never fatal.  A board that cannot be locked should still boot; failing here
+# would take out the display, the network and ssh along with the tuning.
+
+NAME=perf_lock
+DAEMON=""
+
+case "$1" in
+    start)
+        printf "starting %s... " "$NAME"
+        if [ -x /usr/bin/perf-lock ]; then
+            /usr/bin/perf-lock apply > /var/log/perf_lock.log 2>&1 || true
+        else
+            echo "perf-lock not installed" > /var/log/perf_lock.log
+        fi
+        echo "done."
+        ;;
+    stop)
+        # Deliberately not reverted on shutdown: the board is usually rebooted,
+        # and the next boot re-applies anyway.  `perf-lock restore` is the way
+        # back if the lock itself turns out to be the problem.
+        echo "stopping $NAME... done."
+        ;;
+    restart|reload)
+        "$0" stop
+        "$0" start
+        ;;
+    status)
+        [ -x /usr/bin/perf-lock ] && /usr/bin/perf-lock status
+        ;;
+    *)
+        echo "usage: $0 {start|stop|restart|status}" >&2
+        exit 1
+        ;;
+esac

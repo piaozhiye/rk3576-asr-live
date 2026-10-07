@@ -1,0 +1,10 @@
+# term-map for the zhtest.mp4 iPhone-review material (SHERPA_TERM_MAP).
+# Fixes the recurring wrong terms both ASR passes make on tech jargon;
+# one wrong=>right per line, applied to drafts and corrected finals alike.
+# 电工/电子课术语(dianlu.mp4):暂稳态 ASR 两遍都写成 站稳态/散稳态
+站稳态=>暂稳态
+散稳态=>暂稳态
+灵动导=>灵动岛
+Esim=>eSIM
+Eim=>eSIM
+新冠上任三把环=>新官上任三把火

@@ -1,0 +1,23 @@
+# --- ASR tap: tee playback PCM into a shm ring for live subtitles (asrtap) ---
+# Append to /etc/asound.conf (or include).  Install order:
+#   libasound_module_pcm_asrtap.so   -> /usr/lib/alsa-lib/
+#   libasound_module_pcm_asrtap_c.so -> /usr/lib/alsa-lib/
+pcm.asrtap {
+    type asrtap
+    slave.pcm "hw:0,0"
+}
+# Players use this (plug converts any rate/channels; 48k is the codec's native):
+pcm.asrtap_auto {
+    type plug
+    slave {
+        pcm "asrtap"
+        rate 48000
+    }
+}
+# The recogniser opens this as an ordinary ALSA capture device.
+# start_backlog 1: on attach after idle, replay the CURRENT playback session's
+# buffered audio instead of jumping to newest -- keeps the first sentence.
+pcm.asr_capture {
+    type asrtap_c
+    start_backlog 1
+}

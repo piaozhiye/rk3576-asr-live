@@ -1,0 +1,26 @@
+#!/bin/sh
+# Bring the ASR subtitle chain up at boot.  Sourced by the S??* loop in rcS.
+#
+# After a reboot nothing reads the tap ring, so playback taps audio into it
+# and no subtitles appear (user hit exactly this 2026-09-30: reboot ->
+# play-sub -> "没有字幕?").  This starts tools/supervisor.sh, whose 5 s
+# respawn loop self-heals the startup order -- weston is S49, one step
+# before us, so its socket is normally up by the time the overlay first
+# tries to connect; if not, the overlay simply exits and is retried until
+# it connects.  The recogniser is display-independent.
+#
+# Never fatal: a chain that cannot start must not block the boot.
+# Disable: remove this file, or `/etc/init.d/S50asrchain stop`.
+
+DIR=/data/rknn-test/sherpa
+
+case "$1" in
+  start|"" )
+    # supervisor.sh start loops forever: background and detach it
+    ( cd "$DIR" && nohup ./supervisor.sh start > /tmp/sup.log 2>&1 & )
+    ;;
+  stop )
+    ( cd "$DIR" && ./supervisor.sh stop )
+    ;;
+esac
+exit 0
